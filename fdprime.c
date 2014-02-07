@@ -32,7 +32,7 @@ double get_CrossSection(char *sElement, double dEnergyKeV)
   double dXsection;
   int    iZZ = 0, iPflag=0;
   int    err;
-  char   sUnit='a', sErrmsg[80];
+  char   sUnit='a', sErrmsg[1024];
   
   //  printf("%s ",sElement);
   if((err=mucal(sElement, iZZ, dEnergyKeV, sUnit, iPflag, dEnergy, dXsec, dFluo, &sErrmsg[0])) != 0) {
