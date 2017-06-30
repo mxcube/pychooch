@@ -13,7 +13,7 @@ PYCHOOCH_SOURCE_FILES = ["PyChooch.c"] + CHOOCH_SOURCE_FILES
 
 setup(
   name="PyChooch",
-  version="0.0.0",
+  version="0.1.0",
   author=("Chooch: Gywndalf Evans, Diamond Light Source;"
           "Python binding: Matias Guijarro, ESRF"),
   ext_modules=[Extension(
