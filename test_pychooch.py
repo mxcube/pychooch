@@ -1,18 +1,16 @@
 import PyChooch
 import sys
 
-if __name__=='__main__':
-  filename = sys.argv[1]
-  f = open(filename)
-  data=[]
-  i=0
 
-  for l in f:
-    i=i+1
-    if (i>2):
-      data.append(map(float, l.split()))
+def main():
+    filename = sys.argv[1]
+    with open(filename) as f:
+        for _ in range(2):
+            next(f)
+        data = [map(float, line.split()) for line in f]
+    result = PyChooch.calc(data, "Se", "K")
+    print(result)
 
-  print data
 
-  print PyChooch.calc(data, "Se", "K")
-   
+if __name__ == '__main__':
+    main()
