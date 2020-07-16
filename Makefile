@@ -15,7 +15,6 @@ PGPLOTDIR  = /usr/local/pgplot
 DISLIN = /usr/local/dislin
 GSLDIR = /usr/local/lib
 CGRAPHDIR = /usr/local/lib
-BINDIR    = /home/gwyndaf/bin
 INCLUDE   = /usr/local/pgplot
 X11LIBDIR  = /usr/X11R6/lib
 ######################################
@@ -27,6 +26,10 @@ PGLIBS =  -lcpgplot -lpgplot
 DISLINLIBS= -ldislnc
 EXE    = chooch-$(VERSION).$(ARCH)
 EXEPG    = chooch-$(VERSION)-pg.$(ARCH)
+
+PYTHON_INCLUDE_DIR ?= $(shell python -c 'from distutils.sysconfig import get_python_inc; print(get_python_inc())')
+PYTHON_DEST_DIR ?= $(shell python -c 'import site; print(site.getsitepackages()[0])')
+
 #
 # How to compile and link
 #
@@ -58,7 +61,7 @@ chooch : clean ${OBJECTS} Makefile
 	$(CC) -o ${EXE} ${CFLAGS} ${OBJECTS} $(LDFLAGS)
 
 pychooch : clean ${OBJECTS} 
-	$(CC) -shared -o ./$(OSTYPE)/PyChooch.so PyChooch.c ${CFLAGS} ${PYOBJECTS} $(LDFLAGS)
+	$(CC) -shared -o PyChooch.so PyChooch.c ${CFLAGS} ${PYOBJECTS} $(LDFLAGS)
 
 chooch-pg : 
 	make chooch-with-pgplot "CFLAGS = -I$(INCLUDE) $(CFLAGS) -DPGPLOT"
@@ -68,9 +71,8 @@ chooch-with-pgplot : clean ${OBJECTS} Makefile
 #
 all: chooch chooch-pg
 #
-install :
-	$(MV) $(EXE)   $(BINDIR)
-	$(MV) $(EXEPG) $(BINDIR)
+install : pychooch
+	$(MV) PyChooch.so $(PYTHON_DEST_DIR)
 #
 clean :
 	${RM} -f *.o

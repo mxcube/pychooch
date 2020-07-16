@@ -1,8 +1,2 @@
-FOPTIM = -O2
-FFLAGS = $(FOPTIM)
-#LDFLAGS = -static -L$(PGPLOTDIR) $(PGLIBS) -L$(X11LIBDIR) -L$(GSLDIR) \
-#	-L$(CGRAPHDIR) -L$(DISLIN) $(DISLINLIBS) $(CGRAPH) $(LIBS) -lm -ldl -lpthread
-LDFLAGS=-L$(GSLDIR) $(LIBS) -lm -ldl -lpthread -L$(CONDA_PREFIX)/lib -L$(CONDA_PREFIX)/lib
-CFLAGS = -fPIC -I$(CONDA_PREFIX)/include -I$(CONDA_PREFIX)/include/python3.7m
-FC     = g77
-CC     = gcc
+LDFLAGS = $(LIBS) -lm -ldl -lpthread -L$(PREFIX)/lib
+CFLAGS = -fPIC -I$(PREFIX)/include -I$(PYTHON_INCLUDE_DIR)
