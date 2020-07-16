@@ -58,7 +58,7 @@ chooch : clean ${OBJECTS} Makefile
 	$(CC) -o ${EXE} ${CFLAGS} ${OBJECTS} $(LDFLAGS)
 
 pychooch : clean ${OBJECTS} 
-	$(CC) -shared -o ./$(OSTYPE)/PyChooch.so PyChooch.c ${PYOBJECTS} -I/segfs/bliss/depot/pythonbliss/installdir/$(OSTYPE)/python-2.5.2/include/python2.5/ $(LDFLAGS)
+	$(CC) -shared -o ./$(OSTYPE)/PyChooch.so PyChooch.c ${CFLAGS} ${PYOBJECTS} $(LDFLAGS)
 
 chooch-pg : 
 	make chooch-with-pgplot "CFLAGS = -I$(INCLUDE) $(CFLAGS) -DPGPLOT"

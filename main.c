@@ -31,6 +31,13 @@
 #include <math.h>
 //
 #include "chooch.h"
+
+//Forward definition
+void license();
+void nowarranty();
+void distribution();
+
+
 int c;
 char  *sElement="Se";           // Letter symbol for element name e.g. Au, Se, I
 char cScanTitle[TITLE]="";
@@ -146,15 +153,15 @@ int main(int argc, char *argv[])
 	if(!silent)printf("-d: Dump data file for pooch\n", fE4);
 	break;
      case 'w' :
-	(void)nowarranty();
+	nowarranty();
 	exit(EXIT_SUCCESS);
 	break;
      case 'c' :
-	(void)distribution();
+	distribution();
 	exit(EXIT_SUCCESS);
 	break;
      case 'l' :
-	(void)license();
+	license();
 	exit(EXIT_SUCCESS);
 	break;
      }  
