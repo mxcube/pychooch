@@ -7,7 +7,7 @@ def main():
     with open(filename) as f:
         for _ in range(2):
             next(f)
-        data = [map(float, line.split()) for line in f]
+        data = [list(map(float, line.split())) for line in f]
     result = PyChooch.calc(data, "Se", "K")
     print(result)
 

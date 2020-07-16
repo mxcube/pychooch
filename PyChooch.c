@@ -7,6 +7,9 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
+
+#include <gsl/gsl_errno.h>
+
 #include "chooch.h"
 
 char *sElement;
@@ -114,12 +117,23 @@ void custom_err_handler(const char* reason, const char* file, int line, int gsl_
 
 
 PyMODINIT_FUNC
-initPyChooch(void)
+PyInit_PyChooch(void)
 {
     // install our own error handler for the GSL
     gsl_set_error_handler(&custom_err_handler);	
 
-    (void) Py_InitModule("PyChooch", PyChoochMethods);
+    //(void) Py_InitModule("PyChooch", PyChoochMethods);
+    
+    static struct PyModuleDef cModPyDem =
+    {
+        PyModuleDef_HEAD_INIT,
+        "PyChooch", /* name of module */
+        "",          /* module documentation, may be NULL */
+        -1,          /* size of per-interpreter state of the module, or -1 if the module keeps state in global variables. */
+        PyChoochMethods
+    };
+    
+    PyModule_Create(&cModPyDem);
 }
 
 static int my_efswrite(const char *filename, double *x, double *y1, double *y2, int n) {
@@ -259,5 +273,3 @@ PyObject* chooch_calc(double *fXraw, double *fYraw, int nDataPoints, const char*
 
   return res;
 }
-
-
