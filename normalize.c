@@ -32,18 +32,21 @@ extern double fE1, fE2, fE3, fE4;
 int  normalize(int nDataPoints, double fEdge, double *fXraw, double *fYraw, double *fYnorm, int plotX, double *fYfita, double *fYfitb)
 {
   extern int verbose;
-  int i, j, nFit, err;
-  double fXtemp[MAXSIZE], fYtemp[MAXSIZE];
+  int i;
+/*  double fXtemp[MAXSIZE], fYtemp[MAXSIZE];
   double fC, fM;
-  char label[10];
+  char label[10]; */
   if(verbose>0)printf(" Plot switch:   %d\n", plotX);
   if(fE1==0.0)fE1=fXraw[0];
-  if(fE2==0.0)fE2=fEdge-20.0;
-  if(fE3==0.0)fE3=fEdge+25.0;
+  /*  if(fE2==0.0)fE2=fEdge-20.0;*/
+  if(fE2==0.0)fE2=fEdge-(fEdge*0.004);
+  if(fE3==0.0)fE3=fEdge+(fEdge*0.004);
   if(fE4==0.0)fE4=fXraw[nDataPoints-1];
   /* BELOW EDGE */
-  if((fEdge-fE1) > 30.0) {
+  /*  if((fEdge-fE1) > 30.0) {*/
+  if((fEdge-fE1) > (fEdge*0.003)) {
      if(verbose>1)printf("Using linear fit to below edge region\n");
+     printf("Fit regions: %f to %f and %f to %f \n", fE1, fE2, fE3, fE4);
      if(DoFit(nDataPoints, fXraw, fYraw, fYfitb, fE1, fE2) == 1){
 	SetConst(nDataPoints, fYraw[0], fYfitb);
      }
@@ -94,7 +97,7 @@ int DoFit(int nDataPoints, double *fX, double *fY, double *fFit, double x1, doub
 {
   double fXtemp[MAXSIZE], fYtemp[MAXSIZE];
   double fC, fM;
-  int err, i, j = 0;
+  int i, j = 0;
   for (i = 0; i < nDataPoints; i++) {
      if(fX[i] > x1 && fX[i] < x2) {
 	fXtemp[j] = fX[i];
@@ -121,7 +124,7 @@ int impose(int nDataPoints, double fEdge, double *fXraw, double *fYnorm, double 
   double fXtemp[MAXSIZE], fYtemp[MAXSIZE];
   double fYfita[MAXSIZE], fYfitb[MAXSIZE];
   double C[3];
-  char label[10];
+/*  char label[10]; */
 
   /* BELOW EDGE */
   for(i=0; i<50; i++){

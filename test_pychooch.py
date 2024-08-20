@@ -5,9 +5,10 @@ import sys
 def main():
     filename = sys.argv[1]
     with open(filename) as f:
-        for _ in range(2):
-            next(f)
-        data = [map(float, line.split()) for line in f]
+        # Skip first 2 lines
+        f.readline()
+        f.readline()
+        data = [tuple(map(float, line.split())) for line in f]
     result = PyChooch.calc(data, "Se", "K")
     print(result)
 

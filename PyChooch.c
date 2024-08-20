@@ -7,12 +7,16 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
+#include <gsl/gsl_errno.h>
+#include <setjmp.h>
 #include "chooch.h"
 
+static jmp_buf jump_buffer;
 char *sElement;
 char *sEdge;
+char cScanTitle[TITLE]="";
 int id1=0, id2=0;
-int verbose, silent, kev;
+int verbose, status, silent, kev;
 double fpInfl, fppInfl, fpPeak, fppPeak, EInfl, EPeak;
 double fE1=0.0, fE2=0.0, fE3=0.0, fE4=0.0;
 double fEres=0.00014;
@@ -95,7 +99,13 @@ static PyObject* PyChooch_calc(PyObject *self, PyObject *args) {
   }
 
   // do chooch calculation
-  res=chooch_calc(xdata, ydata, npoints, element, edge, outfile);
+  if (setjmp(jump_buffer) == 0) {
+    res=chooch_calc(xdata, ydata, npoints, element, edge, outfile);
+  } else {
+    // Error occurred, handle it
+    PyErr_SetString(PyExc_RuntimeError, "GSL error occurred");
+    return NULL;
+  }
 
   return res;
 }
@@ -109,17 +119,32 @@ static PyMethodDef PyChoochMethods[] = {
 
 
 void custom_err_handler(const char* reason, const char* file, int line, int gsl_errno) {
-    PyErr_SetString(PyExc_RuntimeError, reason);
+    fprintf(stderr, "GSL error: %s:%d: %s (error code: %d)\n", file, line, reason, gsl_errno);
+
+    // Calling directly PyErr_SetString here didn't work
+    // Jump back to the recovery point
+    longjmp(jump_buffer, 1);
 };
 
+// Define the module
+static struct PyModuleDef PyChoochModule = {
+    PyModuleDef_HEAD_INIT,
+    "PyChooch",   /* name of module */
+    NULL,         /* module documentation, may be NULL */
+    -1,           /* size of per-interpreter state of the module,
+                     or -1 if the module keeps state in global variables. */
+    PyChoochMethods
+};
 
+// Initialization function for the module
 PyMODINIT_FUNC
-initPyChooch(void)
+PyInit_PyChooch(void)
 {
-    // install our own error handler for the GSL
-    gsl_set_error_handler(&custom_err_handler);	
+    // Install our own error handler for the GSL
+    gsl_set_error_handler(&custom_err_handler);
 
-    (void) Py_InitModule("PyChooch", PyChoochMethods);
+    // Create the module
+    return PyModule_Create(&PyChoochModule);
 }
 
 static int my_efswrite(const char *filename, double *x, double *y1, double *y2, int n) {
@@ -155,11 +180,11 @@ PyObject* chooch_calc(double *fXraw, double *fYraw, int nDataPoints, const char*
   int nFit, nPoints, plotX=0, psplot=0, pngplot=0, display=0;
   int nSavWin;
   //
-  double dE, tmp, fEdge, fMonoRes;
-  double fYfita[MAXSIZE], fYfitb[MAXSIZE];
-  double fYspline[MAXSIZE], fXfpp[MAXSIZE];
-  double fYsmooth[MAXSIZE], fYnorm[MAXSIZE];
-  double fYfpp[MAXSIZE], fYfpps[MAXSIZE], fYfp[MAXSIZE];
+  double dE, fEdge;
+  double fYfita[MAXSIZE], fYfitb[MAXSIZE];  // Output
+  double fYspline[MAXSIZE], fXfpp[MAXSIZE];  // Output values of Energy and fpp
+  double fYsmooth[MAXSIZE], fYnorm[MAXSIZE]; // Smoothed and normalised fluorescence spectra
+  double fYfpp[MAXSIZE], fYfpps[MAXSIZE], fYfp[MAXSIZE]; // Raw f'', smoothed f''
   double fYDeriv1[MAXSIZE], fYDeriv2[MAXSIZE], fYDeriv3[MAXSIZE];
   double C[3], result, error, fMid;
   //

@@ -12,7 +12,7 @@
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
-*                                                                         *
+ *                                                                         *
  ***************************************************************************/
 
 #ifdef HAVE_CONFIG_H
@@ -27,15 +27,15 @@ int checks (int nDataPoints, double *fXraw, double *fYraw, double *dStep)
 {
   extern int verbose, kev;
   int i, err=0;
-  double Steps[MAXREG];
-  double runtot, avstep, conv=1.0;
+ /* double Steps[MAXREG];*/
+  double runtot=0.0, avstep, conv=1.0;
   double tmp[MAXSIZE];
 
   *dStep=100000;
   /*
    * If -k option used then input data is converted from keV to eV
    */
-  if(kev==1) {
+  if(kev) {
     conv=1000.0;
   }
   for (i = 0; i < nDataPoints; i++) {
@@ -51,8 +51,9 @@ int checks (int nDataPoints, double *fXraw, double *fYraw, double *dStep)
   for(i = 1; i < nDataPoints; i++) { 
     if (tmp[i-1] < 0.0) {
       err = 1;
-      printf("Error in input data: energy does not increase monotonically");
-      exit(0);
+      printf("Error in input data: energy does not increase monotonically\n");
+      printf("\n** Energy value of point %d is bigger than value of point %d **\n", i, i+1);
+      exit(EXIT_FAILURE);
     }
     
     /* Now calculate a 5 point moving average to get minimum average step size */

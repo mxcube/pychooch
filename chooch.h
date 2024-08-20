@@ -34,25 +34,25 @@
 #define MAXREG  20
 #define TITLE   80
 /*
- * Colours for PGPLOT
+ * Colours for PLPLOT
  */
 
-#define WHITE    0
-#define BLACK    1
-#define RED      2
-#define GREEN    3
-#define BLUE     4
-#define CYAN     5
-#define MAGENTA  6
-#define YELLOW   7
-#define ORANGE   8
-#define LIME     9
-#define LIGHTGREEN 10
-#define LIGHTBLUE  11
-#define PURPLE     12
-#define PINK       13
-#define DARKGREY   14
-#define LIGHTGREY  15
+#define BLACK       0
+#define RED         1
+#define YELLOW      2
+#define GREEN       3
+#define AQUAMARINE  4
+#define PINK        5
+#define WHEAT       6
+#define GREY        7
+#define BROWN       8
+#define BLUE        9
+#define VIOLET     10
+#define CYAN       11
+#define TURQUOISE  12
+#define MAGENTA    13
+#define SALMON     14
+#define WHITE      15
 
 /*
  * FFT directions
@@ -71,17 +71,12 @@ typedef double real; // could be double.
  *
  */
 
-#if defined(PGPLOT)
-#include <cpgplot.h>
-#endif
-
 #include "mucal.h"
 
 void printbanner();
 int  fluread(char *, real *, real *, int *);
 int  efswrite(char *, real *, real *, real *, int);
 void normfit(int, float *, float *);
-int DoSpline(int, real *, real *, real *, real *);
 /*
  * int dofft(int , real *, real *, int);
  * int prep_gaussian(int, real, real *);
@@ -98,6 +93,7 @@ void savwin(double, double, double, int *);
  */
 real get_CrossSection(char *, real);
 real get_fpp (char *, real);
+real get_splinor (char *, real);
 char *edge_name(int);
 char *get_Edge(char *, double, double *);
 /*
@@ -124,17 +120,14 @@ void pad(int , int , int , real *, float *);
  */
 
 void psplt(int, double *, double *, double *, char *);
-void pngplt(int, double *, double *, double *, char *);
+void plpng(int, double *, double *, double *, char *, char *, int);
 
 /*
  * toplot
  */
-#if defined(PGPLOT)
 void toplot(int , real *, real *, char *, int);
 void spacebar();
 void addline(int, real *, real *, int);
-void efsplot(int, double *, double *, double *, int, char *);
-#endif
 /*
  * usage
  */
@@ -144,6 +137,13 @@ void usage();
  * copyright
  */
 void copyright();
+
+/*
+ * license
+ */
+void license();
+void nowarranty();
+void distribution();
 
 /*
  * integrate
@@ -157,13 +157,18 @@ double IntegrateExtrap(int, double, double, double, double);
 double CauchyCurve(int, double, double, double);
 double IntegrateCurve(int, double, double, double);
 double Singularity(double, double, double, double, double, double, double, double, double);
-
-
+/*
+ * minmax
+ */
+int minmax(int, float *, float *, float *);
 /*
  *
  */
 void psplt(int, double *, double *, double *, char *);
-
+/*
+ *
+ */
+void parse(int, char **);
 /*
  *
  */
